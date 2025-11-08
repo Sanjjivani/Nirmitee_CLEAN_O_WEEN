@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Cleanup - CleanEarth Community{% endblock %}
+
+{% block content %}
+<div class="upload-container">
+    <div class="upload-header">
+        <h1>Upload Cleanup Photos</h1>
+        <div class="upload-info">
+            <i class="fas fa-info-circle"></i>
+            <p>📸 Collab Before & After Image and Upload. No points for incomplete uploads. Prizes for top contributors!</p>
+        </div>
+    </div>
+
+    <div class="upload-card">
+        <form method="POST" enctype="multipart/form-data" id="uploadForm">
+            <div class="form-section">
+                <h4><i class="fas fa-map-marker-alt me-2"></i>Cleanup Details</h4>
+                
+                <div class="form-group">
+                    <label>Location *</label>
+                    <input type="text" name="location" class="form-control" 
+                           placeholder="Where did you perform the cleanup?" required>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label>Waste Collected *</label>
+                            <input type="text" name="waste_collected" class="form-control" 
+                                   placeholder="e.g., Plastic bottles, glass, paper waste" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Weight (kg) *</label>
+                            <input type="number" name="waste_kg" class="form-control" 
+                                   min="0.1" step="0.1" placeholder="0.0" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h4><i class="fas fa-camera me-2"></i>Cleanup Photos</h4>
+                <p class="text-muted">Upload both BEFORE and AFTER images to earn 10 points</p>
+
+                <div class="upload-grid">
+                    <div class="upload-box before-upload">
+                        <div class="upload-icon">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <h5>BEFORE Photo</h5>
+                        <p class="text-muted">Show the area before cleanup</p>
+                        <input type="file" name="before_photo" accept="image/*" required>
+                        <div class="file-info">PNG, JPG, JPEG, GIF (Max 16MB)</div>
+                    </div>
+
+                    <div class="upload-box after-upload">
+                        <div class="upload-icon">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <h5>AFTER Photo</h5>
+                        <p class="text-muted">Show the area after cleanup</p>
+                        <input type="file" name="after_photo" accept="image/*" required>
+                        <div class="file-info">PNG, JPG, JPEG, GIF (Max 16MB)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="points-info">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-star me-2"></i>Points Reward</h6>
+                    <p class="mb-0">Complete submissions earn <strong>10 points</strong>. Make sure to upload both images!</p>
+                </div>
+            </div>
+
+            <div class="submit-section">
+                <button type="submit" class="btn btn-success btn-upload">
+                    <i class="fas fa-cloud-upload-alt me-2"></i>
+                    Submit Cleanup
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Simple recent uploads message -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-body text-center">
+            <h6><i class="fas fa-history me-2"></i>Your Cleanup History</h6>
+            <p class="text-muted mb-0">View your previous cleanups on your <a href="{{ url_for('profile') }}">Profile page</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    const beforePhoto = document.querySelector('input[name="before_photo"]');
+    const afterPhoto = document.querySelector('input[name="after_photo"]');
+    
+    if (!beforePhoto.files[0] || !afterPhoto.files[0]) {
+        e.preventDefault();
+        alert('Please upload BOTH images to earn points.');
+        return false;
+    }
+});
+</script>
+{% endblock %}

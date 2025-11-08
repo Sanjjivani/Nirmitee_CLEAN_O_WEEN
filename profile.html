@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - CleanEarth Community{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h1>Your Profile</h1>
+        <p>Manage your account and track your environmental impact</p>
+    </div>
+
+    <div class="profile-content">
+        <div class="row">
+            <!-- Personal Information -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-user me-2"></i>Personal Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="profile-avatar">
+                            <div class="avatar-large">
+                                {{ user.name[0]|upper }}
+                            </div>
+                            <div class="avatar-info">
+                                <h4>{{ user.name }}</h4>
+                                <p class="text-muted">Member since {{ user.created_at.strftime('%B %Y') }}</p>
+                            </div>
+                        </div>
+
+                        <div class="profile-details">
+                            <div class="detail-item">
+                                <label>Full Name</label>
+                                <p>{{ user.name }}</p>
+                            </div>
+                            <div class="detail-item">
+                                <label>Email Address</label>
+                                <p>{{ user.email }}</p>
+                            </div>
+                            <div class="detail-item">
+                                <label>Member Since</label>
+                                <p>{{ user.created_at.strftime('%B %d, %Y') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-bar me-2"></i>Your Impact</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-list">
+                            <div class="stat-row">
+                                <span>Total Points:</span>
+                                <strong class="text-success">{{ user.points }}</strong>
+                            </div>
+                            <div class="stat-row">
+                                <span>Cleanups Completed:</span>
+                                <strong class="text-primary">{{ user.total_cleanups }}</strong>
+                            </div>
+                            <div class="stat-row">
+                                <span>Waste Collected:</span>
+                                <strong class="text-warning">{{ "%.1f"|format(user.total_waste) }} kg</strong>
+                            </div>
+                            <div class="stat-row">
+                                <span>Community Rank:</span>
+                                <strong class="text-info">#{{ user.get_rank() }}</strong>
+                            </div>
+                            <div class="stat-row">
+                                <span>Average per Cleanup:</span>
+                                <strong class="text-muted">
+                                    {{ "%.1f"|format(user.total_waste / user.total_cleanups if user.total_cleanups > 0 else 0) }} kg
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="fas fa-history me-2"></i>Recent Activity</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_cleanups %}
+                    <div class="activity-table">
+                        {% for cleanup in recent_cleanups %}
+                        <div class="activity-row">
+                            <div class="activity-date">
+                                {{ cleanup.created_at.strftime('%b %d') }}
+                            </div>
+                            <div class="activity-location">
+                                <strong>{{ cleanup.location }}</strong>
+                                <small>{{ cleanup.waste_collected }}</small>
+                            </div>
+                            <div class="activity-points">
+                                <span class="badge bg-success">+{{ cleanup.points_earned }} pts</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                        <p>No cleanup activities yet</p>
+                        <a href="{{ url_for('upload') }}" class="btn btn-success">Start Your First Cleanup</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

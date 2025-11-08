@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - CleanEarth Community{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Dashboard Overview</h1>
+    <p class="welcome-message">{{ motivational_message }}</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card primary">
+        <div class="stat-icon">
+            <i class="fas fa-trophy"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ total_points }}</h3>
+            <p>Total Points</p>
+        </div>
+    </div>
+
+    <div class="stat-card success">
+        <div class="stat-icon">
+            <i class="fas fa-trash-restore"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ total_cleanups }}</h3>
+            <p>Cleanups Completed</p>
+        </div>
+    </div>
+
+    <div class="stat-card warning">
+        <div class="stat-icon">
+            <i class="fas fa-weight-scale"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ "%.1f"|format(total_waste) }} kg</h3>
+            <p>Waste Collected</p>
+        </div>
+    </div>
+
+    <div class="stat-card info">
+        <div class="stat-icon">
+            <i class="fas fa-medal"></i>
+        </div>
+        <div class="stat-content">
+            <h3>#{{ user_rank }}</h3>
+            <p>Community Rank</p>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-content">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-bullhorn me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="action-buttons">
+                        <a href="{{ url_for('upload') }}" class="btn btn-success btn-action">
+                            <i class="fas fa-camera"></i>
+                            <span>Upload Cleanup</span>
+                            <small>Earn 10 points per cleanup</small>
+                        </a>
+                        <a href="{{ url_for('leaderboard') }}" class="btn btn-warning btn-action">
+                            <i class="fas fa-trophy"></i>
+                            <span>View Leaderboard</span>
+                            <small>See top contributors</small>
+                        </a>
+                        <a href="{{ url_for('charts') }}" class="btn btn-info btn-action">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Progress Charts</span>
+                            <small>Track your impact</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-history me-2"></i>Recent Cleanups</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_cleanups %}
+                        {% for cleanup in recent_cleanups %}
+                        <div class="activity-item">
+                            <div class="activity-content">
+                                <h6>{{ cleanup.location }}</h6>
+                                <p class="text-muted">{{ cleanup.waste_collected }}</p>
+                                <small>{{ cleanup.created_at.strftime('%b %d, %Y') }}</small>
+                            </div>
+                            <div class="activity-points">
+                                <span class="badge bg-success">+{{ cleanup.points_earned }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-3"></i>
+                            <p>No cleanups yet</p>
+                            <a href="{{ url_for('upload') }}" class="btn btn-sm btn-success">Start Your First Cleanup</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

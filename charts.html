@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Progress Charts - CleanEarth Community{% endblock %}
+
+{% block content %}
+<div class="charts-container">
+    <div class="charts-header">
+        <h1>Progress Charts</h1>
+        <p>Track your environmental impact and cleanup journey</p>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="stats-summary">
+        <div class="stat-item">
+            <div class="stat-icon primary">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ user.total_cleanups }}</h3>
+                <p>Total Cleanups</p>
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon success">
+                <i class="fas fa-weight-scale"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ "%.1f"|format(user.total_waste) }}kg</h3>
+                <p>Waste Collected</p>
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon warning">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ user.points }}</h3>
+                <p>Total Points</p>
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon info">
+                <i class="fas fa-medal"></i>
+            </div>
+            <div class="stat-content">
+                <h3>#{{ user.get_rank() }}</h3>
+                <p>Community Rank</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-grid">
+        <div class="chart-card">
+            <div class="card-header">
+                <h5><i class="fas fa-calendar-week me-2"></i>Weekly Activity</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="weeklyChart" height="250"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-line me-2"></i>Monthly Progress</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Waste Collection Chart -->
+    <div class="chart-card full-width">
+        <div class="card-header">
+            <h5><i class="fas fa-weight-scale me-2"></i>Waste Collection Over Time</h5>
+        </div>
+        <div class="card-body">
+            <canvas id="wasteChart" height="150"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Weekly Activity Chart
+    const weeklyCtx = document.getElementById('weeklyChart');
+    if (weeklyCtx) {
+        new Chart(weeklyCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ weekly_data.dates | tojson }},
+                datasets: [{
+                    label: 'Cleanups',
+                    data: {{ weekly_data.activity_counts | tojson }},
+                    backgroundColor: '#2E8B57',
+                    borderColor: '#2E8B57',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Monthly Progress Chart
+    const monthlyCtx = document.getElementById('monthlyChart');
+    if (monthlyCtx) {
+        new Chart(monthlyCtx, {
+            type: 'line',
+            data: {
+                labels: {{ monthly_data.months | tojson }},
+                datasets: [{
+                    label: 'Cleanups',
+                    data: {{ monthly_data.cleanups | tojson }},
+                    borderColor: '#FFD700',
+                    backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    // Waste Collection Chart
+    const wasteCtx = document.getElementById('wasteChart');
+    if (wasteCtx) {
+        new Chart(wasteCtx, {
+            type: 'line',
+            data: {
+                labels: {{ monthly_data.months | tojson }},
+                datasets: [{
+                    label: 'Waste Collected (kg)',
+                    data: {{ monthly_data.waste_collected | tojson }},
+                    borderColor: '#8B7355',
+                    backgroundColor: 'rgba(139, 115, 85, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
